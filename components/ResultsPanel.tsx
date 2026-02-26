@@ -156,10 +156,10 @@ export default function ResultsPanel({ result }: ResultsPanelProps) {
     <div className="flex flex-col gap-4">
       {/* ── Section 1: Hero summary ── */}
       <div className="bg-surface border border-border rounded-xl px-5 py-5 sm:px-8 sm:py-6">
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 sm:gap-6">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 sm:gap-6 text-end">
           {/* Annual + effective rate */}
           <div>
-            <p className="text-xs sm:text-sm text-text-secondary uppercase tracking-wide">
+            <p className="text-xs sm:text-sm text-text-secondary uppercase tracking-wide ">
               Netto annuo
             </p>
             <p className="font-display text-4xl sm:text-5xl font-semibold text-text-primary mt-1 tabular-nums">
@@ -178,7 +178,9 @@ export default function ResultsPanel({ result }: ResultsPanelProps) {
               Aliquota effettiva
             </p>
             <p className="text-xl font-medium text-text-primary mt-0.5">
-              {isNaN(aliquotaEffettiva) ? "—" : `${aliquotaEffettiva.toFixed(1)}%`}
+              {isNaN(aliquotaEffettiva)
+                ? "—"
+                : `${aliquotaEffettiva.toFixed(1)}%`}
             </p>
           </div>
         </div>

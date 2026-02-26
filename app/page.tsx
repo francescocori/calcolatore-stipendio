@@ -37,14 +37,14 @@ export default function Home() {
             <h1 className="font-display text-3xl sm:text-5xl text-text-primary leading-tight">
               Calcola il tuo stipendio netto
             </h1>
-            <p className="text-sm text-text-secondary mt-2">
+            <p className="text-md text-text-secondary mt-2">
               Inserisci la tua RAL e scopri quanto porterai a casa ogni mese ·
               Anno fiscale 2026
             </p>
             <p className="text-xs text-text-secondary mt-2">
-              CDI · Milano · Lombardia · 13 mensilità · Nessun carico familiare
-              · Nessuna agevolazione.{" "}
-              <span className="italic">TFR non incluso.</span>
+              ( CDI · Milano · Lombardia · 13 mensilità · Nessun carico
+              familiare · Nessuna agevolazione.{" "}
+              <span className="italic">TFR non incluso.</span>)
             </p>
           </div>
 
