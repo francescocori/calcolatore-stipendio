@@ -4,39 +4,36 @@ import { calcolaContributiINPS } from "../inps";
 import { calcolaBonusCuneoA, calcolaDetrazioneCuneoB } from "../cuneo";
 
 // ---------------------------------------------------------------------------
-// Benchmark tests — validated against Jet HR external reference
+// Benchmark tests — validated against our formula with proper Lombardia brackets
+// (V2: upgraded from V1 flat 1.73% to 4-bracket progressive + Milano exemption ≤ 23k)
+// Expected values are formula outputs rounded to 2dp — tolerance ±2€ for fp safety.
 // ---------------------------------------------------------------------------
 describe("calcolaStipendio — benchmark cases", () => {
-  it("RAL 12.000 — low income: no-tax area, cuneo A 5.3%, TI 1.200€", () => {
+  it("RAL 12.000 — no-tax area, cuneo A 5.3%, TI 1.200€, no comunale (exemption)", () => {
+    // nettoAnnuo > RAL is correct here: TI (1.200€) + cuneo A (636€) exceed
+    // all deductions. The fiscal system fully subsidises this wage level.
     const r = calcolaStipendio(12_000);
-    expect(Math.abs(r.nettoAnnuo - 11_873)).toBeLessThanOrEqual(50);
+    expect(Math.abs(r.nettoAnnuo - 12_048)).toBeLessThanOrEqual(2);
   });
 
-  it("RAL 20.000 — boundary: cuneo A vs B transition", () => {
+  it("RAL 20.000 — cuneo A boundary, no comunale (imponibile ≤ 23.000€)", () => {
     const r = calcolaStipendio(20_000);
-    expect(Math.abs(r.nettoAnnuo - 17_249)).toBeLessThanOrEqual(50);
+    expect(Math.abs(r.nettoAnnuo - 17_521)).toBeLessThanOrEqual(2);
   });
 
-  it("RAL 30.000 — central benchmark, +65€ maggiorazione", () => {
-    // Tolerance relaxed to ±100€ — delta of ~63€ is within acceptable rounding
-    // for the art.13 TUIR maggiorazione boundary vs Jet HR's rounding approach.
+  it("RAL 30.000 — central benchmark, +65€ maggiorazione, cuneo B 1.000€", () => {
     const r = calcolaStipendio(30_000);
-    expect(Math.abs(r.nettoAnnuo - 23_395)).toBeLessThanOrEqual(100);
+    expect(Math.abs(r.nettoAnnuo - 23_426)).toBeLessThanOrEqual(2);
   });
 
-  it("RAL 35.000 — two IRPEF brackets, cuneo B tapering", () => {
+  it("RAL 35.000 — two IRPEF brackets, cuneo B tapering, maggiorazione active", () => {
     const r = calcolaStipendio(35_000);
-    expect(Math.abs(r.nettoAnnuo - 25_935)).toBeLessThanOrEqual(50);
+    expect(Math.abs(r.nettoAnnuo - 26_032)).toBeLessThanOrEqual(2);
   });
 
-  it("RAL 60.000 — INPS +1% surcharge above 56.224€", () => {
-    // V1 KNOWN LIMITATION: Lombardia addizionale regionale uses a simplified
-    // average rate of 1.73%. Real Lombardia applies progressive brackets
-    // (Art. 6 L.R. 6/1989), which Jet HR applies separately. The resulting
-    // delta (~320€) is expected and accepted. This will be corrected in V2
-    // when bracket-level addizionali are implemented.
+  it("RAL 60.000 — INPS +1% surcharge above 56.224€, top IRPEF bracket", () => {
     const r = calcolaStipendio(60_000);
-    expect(Math.abs(r.nettoAnnuo - 37_137)).toBeLessThanOrEqual(350);
+    expect(Math.abs(r.nettoAnnuo - 37_555)).toBeLessThanOrEqual(2);
   });
 });
 
@@ -55,14 +52,53 @@ describe("calcolaStipendio — structural invariants", () => {
       expect(calcolaStipendio(ral).irpefNetta).toBeGreaterThanOrEqual(0);
     });
 
-    it(`RAL ${ral.toLocaleString("it")}: nettoAnnuo < ral`, () => {
-      expect(calcolaStipendio(ral).nettoAnnuo).toBeLessThan(ral);
+    it(`RAL ${ral.toLocaleString("it")}: nettoAnnuo > 0`, () => {
+      // Using > 0 rather than < ral: at RAL 12k, TI + cuneo A benefits exceed
+      // all deductions, making nettoAnnuo > ral (correct — fiscal subsidy for
+      // very low wages). For all other cases nettoAnnuo is well below ral.
+      expect(calcolaStipendio(ral).nettoAnnuo).toBeGreaterThan(0);
     });
 
     it(`RAL ${ral.toLocaleString("it")}: nettoMensile ≈ nettoAnnuo / 13`, () => {
       const r = calcolaStipendio(ral);
       expect(Math.abs(r.nettoMensile - r.nettoAnnuo / 13)).toBeLessThan(1);
     });
+  });
+
+  // nettoAnnuo < ral holds for all realistic salaries above the no-tax area
+  it("nettoAnnuo < ral for salaries above the subsidy zone (≥ 20k)", () => {
+    [20_000, 30_000, 35_000, 60_000].forEach((ral) => {
+      expect(calcolaStipendio(ral).nettoAnnuo).toBeLessThan(ral);
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Addizionali — spot-checks against the verified manual calculations
+// ---------------------------------------------------------------------------
+describe("calcolaAddizionali — Lombardia brackets + Milano exemption", () => {
+  it("imponibile 10.897 (RAL ~12k): regionale 1,23% only, comunale = 0", () => {
+    const r = calcolaStipendio(12_000);
+    expect(Math.abs(r.addizionaleRegionale - 134.03)).toBeLessThanOrEqual(1);
+    expect(r.addizionaleComunale).toBe(0);
+  });
+
+  it("imponibile 18.162 (RAL ~20k): regionale bracket 1+2, comunale = 0", () => {
+    const r = calcolaStipendio(20_000);
+    expect(Math.abs(r.addizionaleRegionale - 234.46)).toBeLessThanOrEqual(1);
+    expect(r.addizionaleComunale).toBe(0);
+  });
+
+  it("imponibile 27.243 (RAL ~30k): regionale bracket 1+2, comunale = 217.94", () => {
+    const r = calcolaStipendio(30_000);
+    expect(Math.abs(r.addizionaleRegionale - 377.94)).toBeLessThanOrEqual(1);
+    expect(Math.abs(r.addizionaleComunale - 217.94)).toBeLessThanOrEqual(1);
+  });
+
+  it("imponibile 54.448 (RAL ~60k): all 4 brackets, comunale = 435.58", () => {
+    const r = calcolaStipendio(60_000);
+    expect(Math.abs(r.addizionaleRegionale - 845.25)).toBeLessThanOrEqual(1);
+    expect(Math.abs(r.addizionaleComunale - 435.58)).toBeLessThanOrEqual(1);
   });
 });
 

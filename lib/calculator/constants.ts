@@ -55,8 +55,20 @@ export const CONSTANTS_2026 = {
   TI_AMOUNT: 1200,
 
   // Step 8 — Addizionali (applied on imponibile fiscale)
-  ADD_REGIONALE: 0.0173,    // Lombardia — simplified average rate (V1)
-  ADD_COMUNALE: 0.008,      // Comune di Milano 2026
+  // Source: Regione Lombardia delibera 2022 (confirmed 2026) + Comune di Milano delibera 2026
+
+  // Addizionale Regionale Lombardia — 4 progressive brackets (same thresholds as IRPEF)
+  ADD_REG_BRACKET_1_LIMIT: 15000,
+  ADD_REG_BRACKET_2_LIMIT: 28000,
+  ADD_REG_BRACKET_3_LIMIT: 50000,
+  ADD_REG_RATE_1: 0.0123,   // 0 – 15.000 €
+  ADD_REG_RATE_2: 0.0158,   // 15.001 – 28.000 €
+  ADD_REG_RATE_3: 0.0172,   // 28.001 – 50.000 €
+  ADD_REG_RATE_4: 0.0173,   // oltre 50.000 €
+
+  // Addizionale Comunale Milano — flat rate with exemption threshold
+  ADD_COMUNALE_RATE: 0.008,           // 0,80% flat above threshold
+  ADD_COMUNALE_EXEMPTION: 23000,      // exempt if imponibile ≤ 23.000 € (Comune di Milano delibera)
 
   // General
   MENSILITA: 13,

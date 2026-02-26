@@ -9,12 +9,15 @@ interface ResultsPanelProps {
 
 // ── Utilities ────────────────────────────────────────────────────────────────
 
-function fmt(value: number) {
-  return Math.round(value).toLocaleString("it-IT", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  });
+// Manual it-IT currency format: avoids toLocaleString() which produces
+// different output on Node.js (no ICU) vs browser, causing a hydration mismatch.
+// Output matches browser it-IT: dot thousand-separators + " €" suffix (e.g. "1.795 €").
+function fmt(value: number): string {
+  const n = Math.round(value);
+  const abs = Math.abs(n)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return (n < 0 ? "-" : "") + abs + "\u00a0€";
 }
 
 function pct(part: number, total: number) {
