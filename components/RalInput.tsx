@@ -12,9 +12,6 @@ const {
   IRPEF_BRACKET_2_LIMIT,
 } = CONSTANTS_2026;
 
-const QUICK_PILLS = [20_000, 25_000, 30_000, 35_000, 40_000, 50_000, 60_000, 80_000];
-const SLIDER_MIN = 10_000;
-const SLIDER_MAX = 200_000;
 const INPUT_MIN = 0;
 const INPUT_MAX = 500_000;
 
@@ -59,18 +56,6 @@ export default function RalInput({ value, onChange }: RalInputProps) {
     }
   }
 
-  function handleSlider(e: React.ChangeEvent<HTMLInputElement>) {
-    onChange(Number(e.target.value));
-    setRawText(null);
-  }
-
-  function handlePill(v: number) {
-    onChange(v);
-    setRawText(null);
-  }
-
-  const sliderValue = Math.min(Math.max(value, SLIDER_MIN), SLIDER_MAX);
-
   return (
     <div className="bg-surface border border-border rounded-xl px-5 py-4 flex flex-col gap-4">
       {/* Label + value input */}
@@ -81,7 +66,7 @@ export default function RalInput({ value, onChange }: RalInputProps) {
         >
           RAL lorda annua
         </label>
-        <div className="flex items-baseline gap-1">
+        <div className="flex items-baseline gap-1 border border-border rounded-md px-3 py-1.5 focus-within:border-accent transition-colors">
           <span className="text-text-tertiary text-base">€</span>
           <input
             id="ral-input"
@@ -95,45 +80,6 @@ export default function RalInput({ value, onChange }: RalInputProps) {
             className="text-right text-3xl sm:text-4xl font-semibold text-text-primary bg-transparent outline-none tabular-nums w-40 sm:w-52"
           />
         </div>
-      </div>
-
-      {/* Slider */}
-      <div className="px-1">
-        <input
-          type="range"
-          min={SLIDER_MIN}
-          max={SLIDER_MAX}
-          step={500}
-          value={sliderValue}
-          onChange={handleSlider}
-          aria-label="RAL lorda — slider"
-        />
-        <div className="flex justify-between text-xs text-text-tertiary mt-1 px-0.5">
-          <span>10k</span>
-          <span>200k</span>
-        </div>
-      </div>
-
-      {/* Quick pills */}
-      <div className="flex flex-wrap gap-2">
-        {QUICK_PILLS.map((v) => {
-          const isActive = value === v;
-          return (
-            <button
-              key={v}
-              type="button"
-              onClick={() => handlePill(v)}
-              className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors
-                ${
-                  isActive
-                    ? "bg-accent text-white border-accent"
-                    : "bg-surface-alt text-text-secondary border-border hover:border-accent hover:text-accent"
-                }`}
-            >
-              {v / 1_000}k
-            </button>
-          );
-        })}
       </div>
 
       {/* Info strip */}
