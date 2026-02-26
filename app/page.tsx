@@ -11,7 +11,7 @@ const DEFAULT_RAL = 30_000;
 export default function Home() {
   const [ral, setRal] = useState(DEFAULT_RAL);
   const [result, setResult] = useState<CalcoloResult>(
-    calcolaStipendio(DEFAULT_RAL)
+    calcolaStipendio(DEFAULT_RAL),
   );
 
   function handleRalChange(val: number) {
@@ -22,7 +22,6 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-bg py-10 sm:py-14 px-4">
       <div className="max-w-2xl mx-auto flex flex-col gap-5 sm:gap-6">
-
         {/* Header */}
         <div>
           <h1 className="font-display text-2xl sm:text-3xl text-text-primary leading-tight">
@@ -36,12 +35,10 @@ export default function Home() {
         {/* Input */}
         <RalInput value={ral} onChange={handleRalChange} />
 
-        {/* Assumptions */}
-        <AssunzioniBox />
-
         {/* Results */}
         <ResultsPanel result={result} />
-
+        {/* Assumptions */}
+        <AssunzioniBox />
       </div>
     </main>
   );

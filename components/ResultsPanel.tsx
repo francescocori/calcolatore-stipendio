@@ -143,9 +143,9 @@ export default function ResultsPanel({ result }: ResultsPanelProps) {
     return () => clearTimeout(t);
   }, [result]);
 
-  const netPct  = barReady ? pct(nettoAnnuo, ral)                      : "0";
-  const taxPct  = barReady ? pct(irpefNetta + addizionaliTotali, ral)   : "0";
-  const inpsPct = barReady ? pct(contributiINPS, ral)                   : "0";
+  const netPct = barReady ? pct(nettoAnnuo, ral) : "0";
+  const taxPct = barReady ? pct(irpefNetta + addizionaliTotali, ral) : "0";
+  const inpsPct = barReady ? pct(contributiINPS, ral) : "0";
 
   const showIntegrazioni = bonusCuneoA > 0 || trattamentoIntegrativo > 0;
 
@@ -154,11 +154,9 @@ export default function ResultsPanel({ result }: ResultsPanelProps) {
 
   return (
     <div className="flex flex-col gap-4">
-
       {/* ── Section 1: Hero summary ── */}
       <div className="bg-surface rounded-xl shadow-md px-5 py-5 sm:px-8 sm:py-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 sm:gap-6">
-
           {/* Monthly net — primary */}
           <div>
             <p className="text-xs sm:text-sm text-text-secondary uppercase tracking-wide">
@@ -188,43 +186,6 @@ export default function ResultsPanel({ result }: ResultsPanelProps) {
         </div>
       </div>
 
-      {/* ── Section 2: Stacked bar ── */}
-      <div className="bg-surface rounded-xl px-5 py-5 sm:px-6">
-        <p className="text-sm font-medium text-text-secondary mb-3">
-          Come si distribuisce la tua RAL
-        </p>
-
-        <div className="h-7 sm:h-8 rounded-full overflow-hidden flex w-full bg-border">
-          <div
-            className="bg-positive transition-all duration-500 ease-out"
-            style={{ width: `${netPct}%` }}
-          />
-          <div
-            className="bg-accent transition-all duration-500 ease-out"
-            style={{ width: `${taxPct}%` }}
-          />
-          <div
-            className="bg-warning transition-all duration-500 ease-out"
-            style={{ width: `${inpsPct}%` }}
-          />
-        </div>
-
-        <div className="flex flex-wrap gap-x-5 gap-y-1.5 mt-3 text-xs text-text-secondary">
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block w-2 h-2 rounded-full bg-positive shrink-0" />
-            Netto: {pct(nettoAnnuo, ral)}%
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block w-2 h-2 rounded-full bg-accent shrink-0" />
-            Tasse: {pct(irpefNetta + addizionaliTotali, ral)}%
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block w-2 h-2 rounded-full bg-warning shrink-0" />
-            Contributi INPS: {pct(contributiINPS, ral)}%
-          </span>
-        </div>
-      </div>
-
       {/* ── Section 3: Detailed breakdown ── */}
       <div className="bg-surface rounded-xl shadow-sm px-5 py-5 sm:px-6">
         <p className="text-sm font-medium text-text-secondary mb-4">
@@ -233,21 +194,62 @@ export default function ResultsPanel({ result }: ResultsPanelProps) {
 
         {/* Re-key on ral change to replay stagger animation */}
         <div key={breakdownKey} className="flex flex-col gap-0">
-
           {/* Group A — Deductions */}
           <div className="border-l-2 border-warning pl-3 sm:pl-4 flex flex-col gap-2">
-            <Row index={0} label="Contributi INPS (9,19%)"                    value={contributiINPS}       sign="−" colorClass="text-warning" />
-            <Row index={1} label="IRPEF lorda"                                value={irpefLorda}           sign="−" colorClass="text-warning" />
-            <Row index={2} label="↳ Detrazione lav. dip. (art.13)"            value={detrazioneArt13}      sign="+" indent colorClass="text-positive" />
+            <Row
+              index={0}
+              label="Contributi INPS (9,19%)"
+              value={contributiINPS}
+              sign="−"
+              colorClass="text-warning"
+            />
+            <Row
+              index={1}
+              label="IRPEF lorda"
+              value={irpefLorda}
+              sign="−"
+              colorClass="text-warning"
+            />
+            <Row
+              index={2}
+              label="↳ Detrazione lav. dip. (art.13)"
+              value={detrazioneArt13}
+              sign="+"
+              indent
+              colorClass="text-positive"
+            />
             {detrazioneCuneoB > 0 && (
-              <Row index={3} label="↳ Detrazione cuneo fiscale"               value={detrazioneCuneoB}     sign="+" indent colorClass="text-positive" />
+              <Row
+                index={3}
+                label="↳ Detrazione cuneo fiscale"
+                value={detrazioneCuneoB}
+                sign="+"
+                indent
+                colorClass="text-positive"
+              />
             )}
-            <Row index={detrazioneCuneoB > 0 ? 4 : 3}
-                 label="= IRPEF netta"                                         value={irpefNetta}           sign="−" bold colorClass="text-warning" />
-            <Row index={detrazioneCuneoB > 0 ? 5 : 4}
-                 label="Addizionale regionale (Lombardia 1,73%)"               value={addizionaleRegionale} sign="−" colorClass="text-warning" />
-            <Row index={detrazioneCuneoB > 0 ? 6 : 5}
-                 label="Addizionale comunale (Milano 0,80%)"                   value={addizionaleComunale}  sign="−" colorClass="text-warning" />
+            <Row
+              index={detrazioneCuneoB > 0 ? 4 : 3}
+              label="= IRPEF netta"
+              value={irpefNetta}
+              sign="−"
+              bold
+              colorClass="text-warning"
+            />
+            <Row
+              index={detrazioneCuneoB > 0 ? 5 : 4}
+              label="Addizionale regionale (Lombardia 1,73%)"
+              value={addizionaleRegionale}
+              sign="−"
+              colorClass="text-warning"
+            />
+            <Row
+              index={detrazioneCuneoB > 0 ? 6 : 5}
+              label="Addizionale comunale (Milano 0,80%)"
+              value={addizionaleComunale}
+              sign="−"
+              colorClass="text-warning"
+            />
           </div>
 
           <hr className="border-separator my-4" />
@@ -284,13 +286,17 @@ export default function ResultsPanel({ result }: ResultsPanelProps) {
           {/* Final totals */}
           <div className="flex flex-col gap-1.5">
             <div className="flex justify-between items-baseline gap-2">
-              <span className="font-medium text-base text-text-primary">Netto annuo</span>
+              <span className="font-medium text-base text-text-primary">
+                Netto annuo
+              </span>
               <span className="text-positive font-semibold text-lg tabular-nums shrink-0">
                 {fmt(nettoAnnuo)}
               </span>
             </div>
             <div className="flex justify-between items-baseline gap-2">
-              <span className="font-medium text-base text-text-primary">Netto mensile (÷13)</span>
+              <span className="font-medium text-base text-text-primary">
+                Netto mensile (÷13)
+              </span>
               <span className="text-positive font-semibold text-xl tabular-nums shrink-0">
                 {fmt(nettoMensile)}
               </span>
@@ -301,8 +307,8 @@ export default function ResultsPanel({ result }: ResultsPanelProps) {
           <p className="text-xs text-text-tertiary italic mt-4 pt-4 border-t border-separator">
             * Il cuneo fiscale (Binario A) non si applica alla tredicesima. Il
             netto mensile è una media su 13 mensilità — la tredicesima effettiva
-            risulterà leggermente inferiore. Profilo: CDI · Milano · Anno fiscale
-            2026.
+            risulterà leggermente inferiore. Profilo: CDI · Milano · Anno
+            fiscale 2026.
           </p>
         </div>
       </div>

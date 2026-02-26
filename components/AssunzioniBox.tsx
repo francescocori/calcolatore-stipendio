@@ -7,8 +7,8 @@ const ASSUNZIONI = [
     assunzione: "Nessuna (no Under 36, no Bonus Mamme, ecc.)",
   },
   { voce: "Mensilità", assunzione: "13 (tredicesima inclusa)" },
-  { voce: "Add. regionale", assunzione: "1,73% (aliquota media Lombardia — V1)" },
-  { voce: "Add. comunale", assunzione: "0,80% (Comune di Milano 2026)" },
+  { voce: "Add. regionale", assunzione: "Lombardia — 4 scaglioni: 1,23% / 1,58% / 1,72% / 1,73%" },
+  { voce: "Add. comunale", assunzione: "Milano 0,80% · esente se imponibile ≤ 23.000 €" },
   { voce: "TFR", assunzione: "Non incluso (accantonamento, non trattenuta)" },
 ];
 
