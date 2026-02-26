@@ -16,11 +16,13 @@ const INPUT_MIN = 0;
 const INPUT_MAX = 500_000;
 
 function getTierLabel(ral: number): string {
-  if (ral <= DET_LIMIT_1)         return "No-tax area · Trattamento integrativo attivo";
-  if (ral <= CUNEO_A_MAX)         return "Cuneo fiscale A · bonus esente da IRPEF attivo";
+  if (ral <= DET_LIMIT_1) return "No-tax area · Trattamento integrativo attivo";
+  if (ral <= CUNEO_A_MAX)
+    return "Cuneo fiscale A · bonus esente da IRPEF attivo";
   if (ral <= IRPEF_BRACKET_1_LIMIT) return "Scaglione IRPEF 23%";
-  if (ral <= CUNEO_B_FLAT_LIMIT)  return "Scaglione IRPEF 23%–33% · cuneo B 1.000 €";
-  if (ral <= CUNEO_B_MAX)         return "Scaglione IRPEF 33% · cuneo B in riduzione";
+  if (ral <= CUNEO_B_FLAT_LIMIT)
+    return "Scaglione IRPEF 23%–33% · cuneo B 1.000 €";
+  if (ral <= CUNEO_B_MAX) return "Scaglione IRPEF 33% · cuneo B in riduzione";
   if (ral <= IRPEF_BRACKET_2_LIMIT) return "Scaglione IRPEF 33%";
   return "Scaglione IRPEF 43%";
 }
@@ -28,16 +30,19 @@ function getTierLabel(ral: number): string {
 interface RalInputProps {
   value: number;
   onChange: (val: number) => void;
+  onConfirm: () => void;
 }
 
-export default function RalInput({ value, onChange }: RalInputProps) {
+export default function RalInput({
+  value,
+  onChange,
+  onConfirm,
+}: RalInputProps) {
   // null = show formatted; string = user is actively typing
   const [rawText, setRawText] = useState<string | null>(null);
 
   const displayValue =
-    rawText !== null
-      ? rawText
-      : value.toLocaleString("it-IT");
+    rawText !== null ? rawText : value.toLocaleString("it-IT");
 
   function handleFocus() {
     setRawText(String(value));
@@ -62,9 +67,9 @@ export default function RalInput({ value, onChange }: RalInputProps) {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <label
           htmlFor="ral-input"
-          className="text-sm font-medium text-text-secondary"
+          className="text-[10px] font-semibold text-text-secondary uppercase tracking-widest"
         >
-          RAL lorda annua
+          Stipendio (RAL)
         </label>
         <div className="flex items-baseline gap-1 border border-border rounded-md px-3 py-1.5 focus-within:border-accent transition-colors">
           <span className="text-text-tertiary text-base">€</span>
@@ -77,10 +82,20 @@ export default function RalInput({ value, onChange }: RalInputProps) {
             onFocus={handleFocus}
             onBlur={handleBlur}
             onChange={handleInputChange}
+            onKeyDown={(e) => e.key === "Enter" && onConfirm()}
             className="text-right text-3xl sm:text-4xl font-semibold text-text-primary bg-transparent outline-none tabular-nums w-40 sm:w-52"
           />
         </div>
       </div>
+
+      {/* CTA */}
+      <button
+        type="button"
+        onClick={onConfirm}
+        className="w-full bg-[#111111] text-white rounded-md py-3 text-xs font-semibold hover:bg-[#333333] transition-colors tracking-widest uppercase"
+      >
+        Calcola
+      </button>
 
       {/* Info strip */}
       <div className="flex items-center gap-2 text-xs text-text-tertiary border-t border-border pt-3">

@@ -25,8 +25,8 @@ const config: Config = {
         separator: "var(--color-separator)",
       },
       fontFamily: {
-        sans: ["DM Sans", "sans-serif"],
-        display: ["DM Serif Display", "serif"],
+        sans: ["Roboto", "sans-serif"],
+        display: ["Roboto", "sans-serif"],
       },
       borderRadius: {
         sm: "var(--radius-sm)",

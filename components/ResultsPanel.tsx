@@ -155,163 +155,163 @@ export default function ResultsPanel({ result }: ResultsPanelProps) {
   return (
     <div className="flex flex-col gap-4">
       {/* ── Section 1: Hero summary ── */}
-      <div className="bg-surface rounded-xl shadow-md px-5 py-5 sm:px-8 sm:py-6">
+      <div className="bg-surface border border-border rounded-xl px-5 py-5 sm:px-8 sm:py-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 sm:gap-6">
-          {/* Monthly net — primary */}
+          {/* Annual + effective rate */}
           <div>
             <p className="text-xs sm:text-sm text-text-secondary uppercase tracking-wide">
-              Netto mensile
+              Netto annuo
             </p>
-            <p className="font-display text-4xl sm:text-5xl font-semibold text-positive mt-1 tabular-nums">
-              {fmt(displayMensile)}
-            </p>
-            <p className="text-xs text-text-tertiary mt-1">
-              al mese · ÷ 13 mensilità
+            <p className="font-display text-4xl sm:text-5xl font-semibold text-text-primary mt-1 tabular-nums">
+              {fmt(displayAnnuo)}
             </p>
           </div>
 
-          {/* Annual + effective rate */}
+          {/* Monthly net — primary */}
           <div className="sm:text-right">
-            <p className="text-sm text-text-secondary">Netto annuo</p>
-            <p className="text-2xl font-semibold text-positive mt-0.5 tabular-nums">
-              {fmt(displayAnnuo)}
+            <p className="text-sm text-text-secondary">Netto mensile</p>
+            <p className="text-2xl font-semibold text-text-primary mt-0.5 tabular-nums">
+              {fmt(displayMensile)}
             </p>
+            <p className="text-xs text-text-tertiary mt-1"> 13 mensilità</p>
             <p className="text-sm text-text-secondary mt-3">
               Aliquota effettiva
             </p>
             <p className="text-xl font-medium text-text-primary mt-0.5">
-              {aliquotaEffettiva.toFixed(1)}%
+              {isNaN(aliquotaEffettiva) ? "—" : `${aliquotaEffettiva.toFixed(1)}%`}
             </p>
           </div>
         </div>
       </div>
 
-      {/* ── Section 3: Detailed breakdown ── */}
-      <div className="bg-surface rounded-xl shadow-sm px-5 py-5 sm:px-6">
-        <p className="text-sm font-medium text-text-secondary mb-4">
-          Dettaglio trattenute e integrazioni
-        </p>
+      {/* ── Section 3: Detailed breakdown — only after first calculation ── */}
+      {ral > 0 && (
+        <div className="bg-surface border border-border rounded-xl px-5 py-5 sm:px-6">
+          <p className="text-sm font-medium text-text-secondary mb-4">
+            Dettaglio trattenute e integrazioni
+          </p>
 
-        {/* Re-key on ral change to replay stagger animation */}
-        <div key={breakdownKey} className="flex flex-col gap-0">
-          {/* Group A — Deductions */}
-          <div className="border-l-2 border-warning pl-3 sm:pl-4 flex flex-col gap-2">
-            <Row
-              index={0}
-              label="Contributi INPS (9,19%)"
-              value={contributiINPS}
-              sign="−"
-              colorClass="text-warning"
-            />
-            <Row
-              index={1}
-              label="IRPEF lorda"
-              value={irpefLorda}
-              sign="−"
-              colorClass="text-warning"
-            />
-            <Row
-              index={2}
-              label="↳ Detrazione lav. dip. (art.13)"
-              value={detrazioneArt13}
-              sign="+"
-              indent
-              colorClass="text-positive"
-            />
-            {detrazioneCuneoB > 0 && (
+          {/* Re-key on ral change to replay stagger animation */}
+          <div key={breakdownKey} className="flex flex-col gap-0">
+            {/* Group A — Deductions */}
+            <div className="border-l-2 border-warning pl-3 sm:pl-4 flex flex-col gap-2">
               <Row
-                index={3}
-                label="↳ Detrazione cuneo fiscale"
-                value={detrazioneCuneoB}
+                index={0}
+                label="Contributi INPS (9,19%)"
+                value={contributiINPS}
+                sign="−"
+                colorClass="text-warning"
+              />
+              <Row
+                index={1}
+                label="IRPEF lorda"
+                value={irpefLorda}
+                sign="−"
+                colorClass="text-warning"
+              />
+              <Row
+                index={2}
+                label="↳ Detrazione lav. dip. (art.13)"
+                value={detrazioneArt13}
                 sign="+"
                 indent
-                colorClass="text-positive"
+                colorClass="text-text-primary"
               />
+              {detrazioneCuneoB > 0 && (
+                <Row
+                  index={3}
+                  label="↳ Detrazione cuneo fiscale"
+                  value={detrazioneCuneoB}
+                  sign="+"
+                  indent
+                  colorClass="text-text-primary"
+                />
+              )}
+              <Row
+                index={detrazioneCuneoB > 0 ? 4 : 3}
+                label="= IRPEF netta"
+                value={irpefNetta}
+                sign="−"
+                bold
+                colorClass="text-warning"
+              />
+              <Row
+                index={detrazioneCuneoB > 0 ? 5 : 4}
+                label="Addizionale regionale (Lombardia 1,73%)"
+                value={addizionaleRegionale}
+                sign="−"
+                colorClass="text-warning"
+              />
+              <Row
+                index={detrazioneCuneoB > 0 ? 6 : 5}
+                label="Addizionale comunale (Milano 0,80%)"
+                value={addizionaleComunale}
+                sign="−"
+                colorClass="text-warning"
+              />
+            </div>
+
+            <hr className="border-separator my-4" />
+
+            {/* Group B — Integrazioni (conditional) */}
+            {showIntegrazioni && (
+              <>
+                <div className="border-l-2 border-black pl-3 sm:pl-4 flex flex-col gap-2">
+                  {bonusCuneoA > 0 && (
+                    <Row
+                      index={0}
+                      label="Bonus cuneo fiscale"
+                      value={bonusCuneoA}
+                      sign="+"
+                      colorClass="text-text-primary"
+                      tooltip="Somma esente da IRPEF e contributi per redditi ≤ 20.000 €"
+                    />
+                  )}
+                  {trattamentoIntegrativo > 0 && (
+                    <Row
+                      index={bonusCuneoA > 0 ? 1 : 0}
+                      label="Trattamento integrativo (DL 3/2020)"
+                      value={trattamentoIntegrativo}
+                      sign="+"
+                      colorClass="text-text-primary"
+                      tooltip="Spetta quando le detrazioni superano l'IRPEF lorda"
+                    />
+                  )}
+                </div>
+                <hr className="border-separator my-4" />
+              </>
             )}
-            <Row
-              index={detrazioneCuneoB > 0 ? 4 : 3}
-              label="= IRPEF netta"
-              value={irpefNetta}
-              sign="−"
-              bold
-              colorClass="text-warning"
-            />
-            <Row
-              index={detrazioneCuneoB > 0 ? 5 : 4}
-              label="Addizionale regionale (Lombardia 1,73%)"
-              value={addizionaleRegionale}
-              sign="−"
-              colorClass="text-warning"
-            />
-            <Row
-              index={detrazioneCuneoB > 0 ? 6 : 5}
-              label="Addizionale comunale (Milano 0,80%)"
-              value={addizionaleComunale}
-              sign="−"
-              colorClass="text-warning"
-            />
-          </div>
 
-          <hr className="border-separator my-4" />
-
-          {/* Group B — Integrazioni (conditional) */}
-          {showIntegrazioni && (
-            <>
-              <div className="border-l-2 border-positive pl-3 sm:pl-4 flex flex-col gap-2">
-                {bonusCuneoA > 0 && (
-                  <Row
-                    index={0}
-                    label="Bonus cuneo fiscale"
-                    value={bonusCuneoA}
-                    sign="+"
-                    colorClass="text-positive"
-                    tooltip="Somma esente da IRPEF e contributi per redditi ≤ 20.000 €"
-                  />
-                )}
-                {trattamentoIntegrativo > 0 && (
-                  <Row
-                    index={bonusCuneoA > 0 ? 1 : 0}
-                    label="Trattamento integrativo (DL 3/2020)"
-                    value={trattamentoIntegrativo}
-                    sign="+"
-                    colorClass="text-positive"
-                    tooltip="Spetta quando le detrazioni superano l'IRPEF lorda"
-                  />
-                )}
+            {/* Final totals */}
+            <div className="flex flex-col gap-1.5">
+              <div className="flex justify-between items-baseline gap-2">
+                <span className="font-medium text-base text-text-primary">
+                  Netto annuo
+                </span>
+                <span className="text-text-primary font-semibold text-lg tabular-nums shrink-0">
+                  {fmt(nettoAnnuo)}
+                </span>
               </div>
-              <hr className="border-separator my-4" />
-            </>
-          )}
+              <div className="flex justify-between items-baseline gap-2">
+                <span className="font-medium text-base text-text-primary">
+                  Netto mensile (÷13)
+                </span>
+                <span className="text-text-primary font-semibold text-xl tabular-nums shrink-0">
+                  {fmt(nettoMensile)}
+                </span>
+              </div>
+            </div>
 
-          {/* Final totals */}
-          <div className="flex flex-col gap-1.5">
-            <div className="flex justify-between items-baseline gap-2">
-              <span className="font-medium text-base text-text-primary">
-                Netto annuo
-              </span>
-              <span className="text-positive font-semibold text-lg tabular-nums shrink-0">
-                {fmt(nettoAnnuo)}
-              </span>
-            </div>
-            <div className="flex justify-between items-baseline gap-2">
-              <span className="font-medium text-base text-text-primary">
-                Netto mensile (÷13)
-              </span>
-              <span className="text-positive font-semibold text-xl tabular-nums shrink-0">
-                {fmt(nettoMensile)}
-              </span>
-            </div>
+            {/* Footnote */}
+            <p className="text-xs text-text-tertiary italic mt-4 pt-4 border-t border-separator">
+              * Il cuneo fiscale (Binario A) non si applica alla tredicesima. Il
+              netto mensile è una media su 13 mensilità — la tredicesima
+              effettiva risulterà leggermente inferiore. Profilo: CDI · Milano ·
+              Anno fiscale 2026.
+            </p>
           </div>
-
-          {/* Footnote */}
-          <p className="text-xs text-text-tertiary italic mt-4 pt-4 border-t border-separator">
-            * Il cuneo fiscale (Binario A) non si applica alla tredicesima. Il
-            netto mensile è una media su 13 mensilità — la tredicesima effettiva
-            risulterà leggermente inferiore. Profilo: CDI · Milano · Anno
-            fiscale 2026.
-          </p>
         </div>
-      </div>
+      )}
     </div>
   );
 }

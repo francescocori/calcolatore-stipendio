@@ -51,42 +51,6 @@
   animation: row-fade-in 200ms ease-out both;
 }
 
-/* ── Range slider ── */
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--color-border);
-  outline: none;
-  cursor: pointer;
-  width: 100%;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--color-accent);
-  cursor: pointer;
-  border: 2px solid white;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  transition: transform 150ms ease;
-}
-
-input[type="range"]::-webkit-slider-thumb:hover {
-  transform: scale(1.15);
-}
-
-input[type="range"]::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--color-accent);
-  cursor: pointer;
-  border: 2px solid white;
-}
 
 /* ── Accessibility: respect reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
