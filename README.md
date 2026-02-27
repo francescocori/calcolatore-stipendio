@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Calcolatore Stipendio Netto 2026 — Jet HR
 
-## Getting Started
+Prototipo di calcolatore **RAL → Netto** per dipendenti italiani. Inserisci la Retribuzione Annua Lorda e ottieni il netto annuale e mensile con il dettaglio completo di tutte le trattenute fiscali e contributive.
 
-First, run the development server:
+---
+
+## Caratteristiche
+
+- **Calcolo RAL → Netto** con breakdown completo voce per voce
+- **Fiscalità 2026 aggiornata** — IRPEF 3 scaglioni (23% / 33% / 43%), Cuneo Fiscale Binario A e B, Trattamento Integrativo DL 3/2020
+- **Contributi INPS corretti** — aliquota aggiuntiva 1% sulla quota eccedente 56.224 € (INPS Circ. 6/2026)
+- **Addizionali regionali Lombardia** — 4 scaglioni progressivi (1,23% / 1,58% / 1,72% / 1,73%)
+- **Addizionale comunale Milano** — 0,80% con soglia di esenzione a 23.000 €
+- **Architettura modulare** — ogni step del calcolo è un file TypeScript separato e testato
+
+## Profilo supportato (V1)
+
+Il calcolatore copre il caso base standard:
+
+| Parametro | Valore |
+|---|---|
+| Contratto | Tempo indeterminato (CDI), anno intero |
+| Residenza | Milano, Lombardia |
+| Carichi familiari | Nessuno |
+| Agevolazioni | Nessuna |
+| Mensilità | 13 (tredicesima inclusa) |
+
+## Stack
+
+- [Next.js 14](https://nextjs.org) — App Router
+- [TypeScript](https://www.typescriptlang.org)
+- [Tailwind CSS](https://tailwindcss.com)
+
+## Come avviare il progetto
 
 ```bash
+# Installa le dipendenze
+npm install
+
+# Avvia il server di sviluppo
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Apri [http://localhost:3000](http://localhost:3000) nel browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Esegui i test
+npm test
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Struttura del progetto
 
-## Learn More
+```
+lib/calculator/
+├── constants.ts              # Tutte le soglie e aliquote fiscali 2026
+├── inps.ts                   # Contributi INPS dipendente
+├── imponibile.ts             # Base imponibile IRPEF
+├── irpef.ts                  # IRPEF lorda (scaglioni)
+├── detrazioni.ts             # Detrazioni lavoro dipendente art.13 TUIR
+├── cuneo.ts                  # Cuneo fiscale Binario A e B
+├── trattamentoIntegrativo.ts # Trattamento Integrativo DL 3/2020
+├── addizionali.ts            # Addizionali regionali e comunali
+└── index.ts                  # Orchestratore + tipo CalcoloResult
 
-To learn more about Next.js, take a look at the following resources:
+components/
+├── RalInput.tsx              # Input RAL
+├── ResultsPanel.tsx          # Breakdown risultati
+└── AssunzioniBox.tsx         # Assunzioni e semplificazioni adottate
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Roadmap V2
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Agevolazioni contributive (Under 36, Bonus Mamme, Over 50)
+- Detrazioni per familiari a carico
+- Selezione comune di residenza (addizionale comunale variabile)
+- Gestione part-time e periodo lavorativo parziale
