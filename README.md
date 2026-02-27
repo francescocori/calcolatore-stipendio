@@ -67,10 +67,3 @@ components/
 ├── ResultsPanel.tsx          # Breakdown risultati
 └── AssunzioniBox.tsx         # Assunzioni e semplificazioni adottate
 ```
-
-## Roadmap V2
-
-- Agevolazioni contributive (Under 36, Bonus Mamme, Over 50)
-- Detrazioni per familiari a carico
-- Selezione comune di residenza (addizionale comunale variabile)
-- Gestione part-time e periodo lavorativo parziale
