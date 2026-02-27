@@ -2,6 +2,7 @@
 
 Prototipo di calcolatore **RAL → Netto** per dipendenti italiani. Inserisci la Retribuzione Annua Lorda e ottieni il netto annuale e mensile con il dettaglio completo di tutte le trattenute fiscali e contributive.
 
+🔗 **Live demo:** [calcolatore-stipendio-kappa.vercel.app](https://calcolatore-stipendio-kappa.vercel.app/)
 ---
 
 ## Caratteristiche
