@@ -1,4 +1,4 @@
-# Calcolatore Stipendio Netto 2026 — Jet HR
+# Calcolatore Stipendio Netto 2026
 
 Prototipo di calcolatore **RAL → Netto** per dipendenti italiani. Inserisci la Retribuzione Annua Lorda e ottieni il netto annuale e mensile con il dettaglio completo di tutte le trattenute fiscali e contributive.
 
