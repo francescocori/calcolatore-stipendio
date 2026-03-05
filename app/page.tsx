@@ -23,7 +23,9 @@ export default function Home() {
     <div className="min-h-screen bg-bg flex flex-col">
       {/* Sticky header */}
       <header className="sticky top-0 z-10 bg-bg/90 backdrop-blur border-b border-border px-5 sm:px-8 py-3 flex items-center justify-between">
-        <span className="font-display text-xl text-text-primary">JET HR</span>
+        <span className="font-display text-xl text-text-primary">
+          RAL → NETTO
+        </span>
         <span className="text-[10px] font-medium text-text-secondary border border-border rounded px-2 py-0.5 uppercase tracking-widest">
           Anno fiscale 2026
         </span>
